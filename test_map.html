@@ -1,0 +1,40 @@
+<html>
+  <head>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+  <script>
+    google.charts.load('current', { 'packages': ['map'] });
+    google.charts.setOnLoadCallback(drawMap);
+
+    var vis_data = [['Address', 'School']]
+
+  $.getJSON("consensusCopy.json", function(json) {
+    console.log(json); // this will show the info it in firebug console
+
+    console.log(json[0].address);
+
+    
+    for (var i = 0; i < json.length; i++){
+      vis_data.push([json[i].address, json[i].school]);
+    }
+
+    console.log(vis_data.length);
+
+  });
+
+    function drawMap() {
+      var data = google.visualization.arrayToDataTable(vis_data);
+
+    var options = { showTip: true };
+
+    var map = new google.visualization.Map(document.getElementById('chart_div'));
+
+    map.draw(data, options);
+  };
+  </script>
+  </head>
+  <body>
+    <div id="chart_div" style="height: 600px;"></div>
+  </body>
+</html>
