@@ -1,5 +1,5 @@
 <html>
-  <head>
+<head>
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -7,34 +7,56 @@
     google.charts.load('current', { 'packages': ['map'] });
     google.charts.setOnLoadCallback(drawMap);
 
-    var vis_data = [['Address', 'School']]
+    var vis_data = [['Lat', 'Lng', 'School', 'Marker']]
+    var wash_U_index = 0;
 
-  $.getJSON("consensusCopy.json", function(json) {
-    console.log(json); // this will show the info it in firebug console
+    $.getJSON("school_locs5.json", function(json) {
+      for (var i = 0; i < json.length; i++){
+        var marker = 'default';
+        if (json[i].school == 'Washington University in St. Louis'){
+          wash_U_index = i;
+          marker = 'washu'
+        }
+        vis_data.push([json[i].lat, json[i].lng, json[i].school+" ("+json[i].application_count+")", marker]);
+      }
+      if (vis_data.length > 400){
+        alert("Too many schools, over API limit");
+      }
+    });
 
-    console.log(json[0].address);
-
-    
-    for (var i = 0; i < json.length; i++){
-      vis_data.push([json[i].address, json[i].school]);
-    }
-
-    console.log(vis_data.length);
-
-  });
+    var url = 'http://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/';
 
     function drawMap() {
       var data = google.visualization.arrayToDataTable(vis_data);
+      var options = {
+        showTip: true,
+        zoomLevel: 5,
+        enableScrollWheel: true,
+        mapType: 'normal',
+        icons: {
+          'washu': {
+              normal: 'http://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Ball-Azure-icon.png',
+              selected: 'http://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Ball-Right-Azure-icon.png'
+          }
+          // 'washu': {
+          //     normal: 'http://archhacks.io/static/images/archhackslogo-title.png',
+          //     selected: 'http://archhacks.io/static/images/archhackslogo-title.png'
+          // }
+        }
+       };
+      var map = new google.visualization.Map(document.getElementById('chart_div'));
+      // map.setSelection([{'row': 1}]);
+      google.visualization.events.addOneTimeListener(map, 'ready', function(){ 
+        map.setSelection([{row:wash_U_index, column:null}]);
+        // map.setSelection(null);
+      });
+      // map.setSelection([{row:2, column:null}]);
+      map.draw(data, options);
+    };
 
-    var options = { showTip: true };
-
-    var map = new google.visualization.Map(document.getElementById('chart_div'));
-
-    map.draw(data, options);
-  };
   </script>
-  </head>
-  <body>
-    <div id="chart_div" style="height: 600px;"></div>
-  </body>
+</head>
+<body>
+  <div id="chart_div" style="height: 750px; width: 1600px;"></div>
+</body>
 </html>
