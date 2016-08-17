@@ -30,7 +30,7 @@
       var data = google.visualization.arrayToDataTable(vis_data);
       var options = {
         showTip: true,
-        zoomLevel: 5,
+        zoomLevel: 4,
         enableScrollWheel: true,
         mapType: 'normal',
         icons: {
@@ -45,12 +45,9 @@
         }
        };
       var map = new google.visualization.Map(document.getElementById('chart_div'));
-      // map.setSelection([{'row': 1}]);
       google.visualization.events.addOneTimeListener(map, 'ready', function(){ 
         map.setSelection([{row:wash_U_index, column:null}]);
-        // map.setSelection(null);
       });
-      // map.setSelection([{row:2, column:null}]);
       map.draw(data, options);
     };
 
